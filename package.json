@@ -1,0 +1,17 @@
+{
+  "name": "ftps_lib",
+  "version": "1.0.0",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "basic-ftp": "^5.0.5",
+    "ssh2-sftp-client": "^12.0.1"
+  }
+}
