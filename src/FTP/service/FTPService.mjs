@@ -1,4 +1,5 @@
 import * as GET from '../GET/index.mjs';
+import * as SET from '../SET/index.mjs';
 import { CreateClient } from '../common/CreateClient.mjs';
 
 /**
@@ -172,7 +173,7 @@ export class FTPService {
                 return clientResult;
             }
 
-            return await GET.GetListFiles(this._client, path);
+            return await GET.ListFiles(this._client, path);
         } catch (error) {
             return {
                 statusCode: 500,
@@ -217,6 +218,40 @@ export class FTPService {
                 body: {
                     Code: "InternalError",
                     Message: "An error occurred while downloading file.",
+                    Error: error.message,
+                },
+            };
+        }
+    }
+
+    /**
+     * Upload a file to the FTP server from local path
+     * 
+     * @param {string} localPath - Local file path to upload (required)
+     * @param {string} remotePath - Remote file path to save (required)
+     * @returns {Promise<Object>} Response object with upload result
+     * 
+     * @example
+     * const result = await service.UploadFile('./data.csv', '/uploads/data.csv');
+     * if (result.statusCode === 200) {
+     *   console.log('File uploaded successfully');
+     * }
+     */
+    async UploadFile(localPath, remotePath) {
+        try {
+            const clientResult = await this.GetClient();
+            if (clientResult.statusCode !== 200) {
+                return clientResult;
+            }
+
+            return await SET.File(this._client, localPath, remotePath);
+        } catch (error) {
+            return {
+                statusCode: 500,
+                headers: defaultHeaders(),
+                body: {
+                    Code: "InternalError",
+                    Message: "An error occurred while uploading file.",
                     Error: error.message,
                 },
             };
