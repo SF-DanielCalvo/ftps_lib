@@ -6,6 +6,7 @@ import ftp from 'basic-ftp';
  * @param {string} host - FTP server hostname (required)
  * @param {string} user - FTP username (required)
  * @param {string} password - FTP password (required)
+ * @param {boolean} secure - Whether to use secure FTP connection (FTPS) (optional, default: false)
  * @param {number} timeout - Connection timeout in seconds (required)
  * @returns {Promise<Object>} Response object with FTP client
  * 
@@ -16,14 +17,14 @@ import ftp from 'basic-ftp';
  *   // Use ftpClient for FTP operations
  * }
  */
-export async function CreateClient(host, user, password, timeout = 10000) {
+export async function CreateClient(host, user, password, secure, timeout = 10000) {
     try {
         const Verifications = Verification(host, user, password, timeout)
         if (Verifications.statusCode !== 200) {
             return Verifications
         }
 
-        const result = await Call_CreateClient(host, user, password, timeout)
+        const result = await Call_CreateClient(host, user, password, secure, timeout)
 
         return {
             statusCode: result.httpStatusCode,
@@ -51,10 +52,11 @@ export async function CreateClient(host, user, password, timeout = 10000) {
  * @param {string} host - FTP server hostname
  * @param {string} user - FTP username
  * @param {string} password - FTP password
+ * @param {boolean} secure - Whether to use secure FTP connection (FTPS)
  * @param {number} timeout - Connection timeout in seconds
  * @returns {Object} Response object with FTP client
  */
-async function Call_CreateClient(host, user, password, timeout) {
+async function Call_CreateClient(host, user, password, secure, timeout) {
     let httpStatusCode
     let body
 
@@ -63,12 +65,21 @@ async function Call_CreateClient(host, user, password, timeout) {
         
         ftpClient.ftp.verbose = true;
 
-        await ftpClient.access({
+
+        let config = {
             host: host,
             user: user,
             password: password,
-            secure: false, // set to 'true' if using FTPS
-        });
+            secure: secure, // set to 'true' if using FTPS
+        }
+
+        if (secure) {
+            config.secureOptions = {
+                rejectUnauthorized: false
+            }
+        }
+
+        await ftpClient.access(config);
 
         httpStatusCode = 200
         body = {

@@ -56,6 +56,7 @@ export class FTPService {
      * @param {string} config.host - FTP server hostname (required)
      * @param {string} config.user - FTP username (required)
      * @param {string} config.password - FTP password (required)
+     * @param {number} config.secure - Use secure FTP connection (optional, default: false)
      * @param {number} config.timeout - Connection timeout in seconds (required)
      * @returns {Object} Service instance or error response
      * 
@@ -128,6 +129,7 @@ export class FTPService {
                 this._config.host,
                 this._config.user,
                 this._config.password,
+                this._config.secure,
                 this._config.timeout
             );
 
